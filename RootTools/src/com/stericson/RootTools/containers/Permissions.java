@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of the RootTools Project: http://code.google.com/p/roottools/
  *  
  * Copyright (c) 2012 Stephen Erickson, Chris Ravenscroft, Dominik Schuermann, Adam Shanks
@@ -22,85 +22,134 @@
 
 package com.stericson.RootTools.containers;
 
-public class Permissions {
-    String type;
-    String user;
-    String group;
-    String other;
-    String symlink;
-    int permissions;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-    public String getSymlink() {
-        return this.symlink;
+public class Permissions
+{
+    private static final Pattern RwxPattern = Pattern.compile("(^|\\s)([^\\s]?)([-r][-w][-xsS])([-r][-w][-xsS])([-r][-w][-xtT])(\\s|$)");
+
+    private final AccessMode _user;
+    private final AccessMode _group;
+    private final AccessMode _others;
+    private final SpecialAccessMode _special;
+
+    public Permissions(AccessMode user, AccessMode group, AccessMode others, SpecialAccessMode special)
+    {
+        this._user = user;
+        this._group = group;
+        this._others = others;
+        this._special = special;
     }
 
-    public String getType() {
-        return type;
+    public Permissions(AccessMode user, AccessMode group, AccessMode others)
+    {
+        this(user, group, others, SpecialAccessMode.None);
     }
 
-    public int getPermissions() {
-        return this.permissions;
+    public Permissions(AccessMode all)
+    {
+        this(all, all, all);
     }
 
-    public String getUserPermissions() {
-        return this.user;
+    private static boolean isValidUgoAccessMode(int value)
+    {
+        return (value & 0xfffffff8) == 0;
     }
 
-    public String getGroupPermissions() {
-        return this.group;
+    private static boolean isValidSpecialAccessMode(int value)
+    {
+        return (value & 0xffff8fff) == 0;
     }
 
-    public String getOtherPermissions() {
-        return this.other;
+    private static boolean hasFlag(int value, int flag)
+    {
+        return (value & flag) != 0;
     }
 
-    public void setSymlink(String symlink) {
-        this.symlink = symlink;
+    public static Permissions valueOf(int value)
+    {
+        SpecialAccessMode special = SpecialAccessMode.valueOf(value / 1000);
+        value %= 1000;
+        AccessMode user = AccessMode.valueOf(value / 100);
+        value %= 100;
+        AccessMode group = AccessMode.valueOf(value / 10);
+        AccessMode others = AccessMode.valueOf(value % 10);
+
+        return new Permissions(user, group, others, special);
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public static Permissions parse(String userAccess, String groupAccess, String othersAccess)
+    {
+        AccessMode user = AccessMode.parse(userAccess);
+        AccessMode group = AccessMode.parse(groupAccess);
+        AccessMode others = AccessMode.parse(othersAccess);
+        SpecialAccessMode special = SpecialAccessMode.valueOf(userAccess, groupAccess, othersAccess);
+        return new Permissions(user, group, others, special);
     }
 
-    public void setPermissions(int permissions) {
-        this.permissions = permissions;
+    public static Permissions parse(String value)
+    {
+        Matcher matcher = Permissions.RwxPattern.matcher(value);
+
+        if (!matcher.find())
+        {
+            throw new IllegalArgumentException("value");
+        }
+
+        return Permissions.parse(matcher.group(3), matcher.group(4), matcher.group(5));
     }
 
-    public void setUserPermissions(String user) {
-        this.user = user;
+    public AccessMode getUserAccess()
+    {
+        return this._user;
     }
 
-    public void setGroupPermissions(String group) {
-        this.group = group;
+    public AccessMode getGroupAccess()
+    {
+        return this._group;
     }
 
-    public void setOtherPermissions(String other) {
-        this.other = other;
+    public AccessMode getOthersAccess()
+    {
+        return this._others;
     }
 
-    public String getUser() {
-        return user;
+    public boolean userHasAccess(AccessMode mode)
+    {
+        return this._user.hasAccess(mode);
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public boolean groupHasAccess(AccessMode mode)
+    {
+        return this._group.hasAccess(mode);
     }
 
-    public String getGroup() {
-        return group;
+    public boolean othersHasAccess(AccessMode mode)
+    {
+        return this._others.hasAccess(mode);
     }
 
-    public void setGroup(String group) {
-        this.group = group;
+    public int getValue()
+    {
+        return this._special.getValue() * 1000 +
+               this._user.getValue() * 100 +
+               this._group.getValue() * 10 +
+               this._others.getValue();
     }
 
-    public String getOther() {
-        return other;
+    @Override
+    public String toString()
+    {
+        StringBuilder stringBuilder = new StringBuilder(9)
+            .append(this._user.toString())
+            .append(this._group.toString())
+            .append(this._others.toString());
+
+        if (this._special.hasMode(SpecialAccessMode.SetUserId)) { stringBuilder.setCharAt(2, this._user.canExecute() ? 's' : 'S'); }
+        if (this._special.hasMode(SpecialAccessMode.SetGroupId)) { stringBuilder.setCharAt(5, this._group.canExecute() ? 's' : 'S'); }
+        if (this._special.hasMode(SpecialAccessMode.Sticky)) { stringBuilder.setCharAt(8, this._others.canExecute() ? 't' : 'T'); }
+
+        return stringBuilder.toString();
     }
-
-    public void setOther(String other) {
-        this.other = other;
-    }
-
-
 }
