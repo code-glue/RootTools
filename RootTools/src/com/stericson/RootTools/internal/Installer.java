@@ -53,7 +53,7 @@ class Installer {
 
     static final String BOGUS_FILE_NAME = "bogus";
 
-    Context context;
+    final Context context;
     String filesPath;
 
     public Installer(Context context)
@@ -104,7 +104,7 @@ class Installer {
                         try {
                             fos.close();
                             context.deleteFile(BOGUS_FILE_NAME);
-                        } catch (IOException e1) {}
+                        } catch (IOException ignored) {}
                     }
                 }
             } catch (IOException ex) {
@@ -143,7 +143,7 @@ class Installer {
                     	oss.flush();
                     	oss.getFD().sync();
                         oss.close();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
             }
@@ -161,7 +161,7 @@ class Installer {
                 Shell.startRootShell().add(command);
                 commandWait(command);
 
-            } catch (Exception e) {}
+            } catch (Exception ignored) {}
         }
         return true;
     }
@@ -197,19 +197,16 @@ class Installer {
             byte [] buffer = new byte[4096];
             while(-1 != dis.read(buffer));
             byte[] digest = md.digest();
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
-            for(int i=0; i<digest.length; i++)
-                sb.append(Integer.toHexString(digest[i] & 0xFF));
+            for (byte aDigest : digest) { sb.append(Integer.toHexString(aDigest & 0xFF)); }
 
             signature = sb.toString();
-        } catch (IOException ex) {
-            Log.e(LOG_TAG, ex.toString());
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (IOException | NoSuchAlgorithmException ex) {
             Log.e(LOG_TAG, ex.toString());
         }
         finally {
-            try { is.close(); } catch (IOException e) {}
+            try { is.close(); } catch (IOException ignored) {}
         }
         return signature;
     }

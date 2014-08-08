@@ -23,7 +23,6 @@
 package com.stericson.RootTools.internal;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import com.stericson.RootTools.Constants;
@@ -110,7 +109,7 @@ public class Remounter {
                     Shell.startRootShell().add(command);
                     commandWait(command);
 
-                } catch (Exception e) {}
+                } catch (Exception ignored) {}
 
                 mountPoint = findMountPointRecursive(file);
             }
@@ -150,11 +149,8 @@ public class Remounter {
 
             return null;
 
-        } catch (IOException e) {
-            if (RootTools.debugMode) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             if (RootTools.debugMode) {
                 e.printStackTrace();
             }
