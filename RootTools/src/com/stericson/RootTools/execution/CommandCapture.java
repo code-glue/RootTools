@@ -24,40 +24,57 @@ package com.stericson.RootTools.execution;
 
 import com.stericson.RootTools.RootTools;
 
-public class CommandCapture extends Command {
-    private StringBuilder sb = new StringBuilder();
+public class CommandCapture extends Command
+{
+    private final StringBuilder sb = new StringBuilder();
+    private String[] _commands;
 
-    public CommandCapture(int id, String... command) {
-        super(id, command);
+    public CommandCapture(int id, String... command)
+    {
+        super(id); //, command);
+        this._commands = command;
     }
 
-    public CommandCapture(int id, boolean handlerEnabled, String... command) {
-        super(id, handlerEnabled, command);
+    public CommandCapture(int id, boolean handlerEnabled, String... command)
+    {
+        super(id, handlerEnabled); //, command);
+        this._commands = command;
     }
 
-    public CommandCapture(int id, int timeout, String... command) {
-        super(id, timeout, command);
+    public CommandCapture(int id, int timeout, String... command)
+    {
+        super(id, timeout); //, command);
+        this._commands = command;
     }
-
 
     @Override
-    public void commandOutput(int id, String line) {
+    public String[] getCommands()
+    {
+        return this._commands;
+    }
+
+    @Override
+    public void commandOutput(int id, String line)
+    {
         sb.append(line).append('\n');
         RootTools.log("Command", "ID: " + id + ", " + line);
     }
 
     @Override
-    public void commandTerminated(int id, String reason) {
+    public void commandTerminated(int id, String reason)
+    {
         //pass
     }
 
     @Override
-    public void commandCompleted(int id, int exitcode) {
+    public void commandCompleted(int id, int exitcode)
+    {
         //pass
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return sb.toString();
     }
 }
