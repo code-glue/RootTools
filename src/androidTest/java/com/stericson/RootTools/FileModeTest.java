@@ -1,6 +1,11 @@
-package com.stericson.RootTools.lib;
+package com.stericson.RootTools;
 
 import android.test.suitebuilder.annotation.SmallTest;
+
+import com.stericson.RootTools.FileMode;
+import com.stericson.RootTools.FileType;
+import com.stericson.RootTools.Permission;
+import com.stericson.RootTools.Permissions;
 
 import junit.framework.TestCase;
 

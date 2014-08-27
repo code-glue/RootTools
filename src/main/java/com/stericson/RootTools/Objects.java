@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stericson.RootTools.lib;
+package com.stericson.RootTools;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

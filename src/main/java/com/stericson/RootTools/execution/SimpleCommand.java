@@ -24,10 +24,8 @@ package com.stericson.RootTools.execution;
 
 import android.support.annotation.NonNull;
 
-import com.stericson.RootTools.Constants;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.exceptions.RootDeniedException;
-import com.stericson.RootTools.internal.RootToolsInternal;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,7 +57,7 @@ public final class SimpleCommand
         };
 
         RootTools.getShell(root).add(commandCapture);
-        RootToolsInternal.commandWait(RootTools.getShell(root), commandCapture);
+        RootTools.commandWait(RootTools.getShell(root), commandCapture);
 
         return output;
     }

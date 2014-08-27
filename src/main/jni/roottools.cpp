@@ -112,7 +112,7 @@ static jobject roottools_stat(JNIEnv* env, jstring javaPath, jboolean followLink
         ? TEMP_FAILURE_RETRY(stat(path.c_str(), &structStat))
         : TEMP_FAILURE_RETRY(lstat(path.c_str(), &structStat));
 
-    if (result == -1)
+    if (result != 0)
     {
         ALOGE("%s failed: errno %d '%s'", followLinks ? "stat" : "lstat", errno, path.c_str());
         if (throwOnError)
@@ -163,28 +163,51 @@ jstring roottools_realpath(JNIEnv* env, jstring javaPath, jboolean throwOnError)
     return env->NewStringUTF(buffer);
 }
 
+jboolean roottools_settimeofday(JNIEnv* env, jint seconds, jboolean throwOnError)
+{
+    struct timeval time = { seconds };
+
+    if (settimeofday(&time, NULL) == 0)
+    {
+        return true;
+    }
+
+    ALOGE("settimeofday failed: errno %d seconds=%d", errno, seconds);
+    if (throwOnError)
+    {
+        throwErrnoException(env, "settimeofday");
+    }
+    return false;
+}
+
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_stericson_RootTools_lib_RootToolsLib_strerror(JNIEnv* env, jclass clazz, jint errorCode)
+Java_com_stericson_RootTools_RootToolsNative_strerror(JNIEnv* env, jclass clazz, jint errorCode)
 {
     return roottools_strerror(env, errorCode);
 }
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_stericson_RootTools_lib_RootToolsLib_stat(JNIEnv* env, jclass clazz, jstring javaPath, jboolean followLinks, jboolean throwOnError)
+Java_com_stericson_RootTools_RootToolsNative_stat(JNIEnv* env, jclass clazz, jstring javaPath, jboolean followLinks, jboolean throwOnError)
 {
     return roottools_stat(env, javaPath, followLinks, throwOnError);
 }
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_stericson_RootTools_lib_RootToolsLib_getpwuid(JNIEnv* env, jclass clazz, jint userId, jboolean throwOnError)
+Java_com_stericson_RootTools_RootToolsNative_getpwuid(JNIEnv* env, jclass clazz, jint userId, jboolean throwOnError)
 {
     return roottools_getpwuid(env, userId, throwOnError);
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_stericson_RootTools_lib_RootToolsLib_realpath(JNIEnv* env, jclass clazz, jstring javaPath, jboolean throwOnError)
+Java_com_stericson_RootTools_RootToolsNative_realpath(JNIEnv* env, jclass clazz, jstring javaPath, jboolean throwOnError)
 {
     return roottools_realpath(env, javaPath, throwOnError);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_stericson_RootTools_RootToolsNative_settimeofday(JNIEnv* env, jclass clazz, jint seconds, jboolean throwOnError)
+{
+    return roottools_settimeofday(env, seconds, throwOnError);
 }
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved)

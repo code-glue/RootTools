@@ -4,7 +4,7 @@
 //import android.support.annotation.Nullable;
 //
 //import com.stericson.RootTools.internal.RootToolsInternal;
-//import com.stericson.RootTools.lib.FileType;
+//import com.stericson.RootTools.FileType;
 //
 //import java.io.File;
 //import java.util.Date;

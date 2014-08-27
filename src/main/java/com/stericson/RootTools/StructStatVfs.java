@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stericson.RootTools.lib;
+package com.stericson.RootTools;
 
 /**
  * File information returned by fstatvfs and statvfs.

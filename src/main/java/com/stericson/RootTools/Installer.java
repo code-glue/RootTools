@@ -20,7 +20,7 @@
  * limitations under that License.
  */
 
-package com.stericson.RootTools.internal;
+package com.stericson.RootTools;
 
 import java.io.File;
 import java.io.FileInputStream;

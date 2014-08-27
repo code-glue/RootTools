@@ -1,16 +1,12 @@
-package com.stericson.RootTools.lib;
+package com.stericson.RootTools;
 
 import android.support.annotation.NonNull;
 import android.test.suitebuilder.annotation.SmallTest;
-import android.text.TextUtils;
-import android.util.Log;
 
 import junit.framework.TestCase;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FileStatTest extends TestCase
 {

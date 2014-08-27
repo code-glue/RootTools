@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stericson.RootTools.lib;
+package com.stericson.RootTools;
 
 /*
  * A checked exception thrown when native methods fail. This exception contains the native
@@ -62,6 +62,6 @@ public final class ErrnoException extends Exception
     @Override
     public String getMessage()
     {
-        return String.format("%s failed: errno %d (%s)", functionName, errno, RootToolsLib.strerror(errno));
+        return String.format("%s failed: errno %d (%s)", functionName, errno, RootToolsNative.strerror(errno));
     }
 }

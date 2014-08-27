@@ -55,9 +55,9 @@ static jclass findClass(JNIEnv* env, const char* name) {
 }
 
 void JniConstants::init(JNIEnv* env) {
-    errnoExceptionClass = findClass(env, "com/stericson/RootTools/lib/ErrnoException");
+    errnoExceptionClass = findClass(env, "com/stericson/RootTools/ErrnoException");
     fileDescriptorClass = findClass(env, "java/io/FileDescriptor");
     referenceClass = findClass(env, "java/lang/ref/Reference");
-    structStatClass = findClass(env, "com/stericson/RootTools/lib/StructStat");
-    structPasswdClass = findClass(env, "com/stericson/RootTools/lib/StructPasswd");
+    structStatClass = findClass(env, "com/stericson/RootTools/StructStat");
+    structPasswdClass = findClass(env, "com/stericson/RootTools/StructPasswd");
 }

@@ -1,3 +1,25 @@
+/* 
+ * This file is part of the RootTools Project: http://code.google.com/p/roottools/
+ *  
+ * Copyright (c) 2012 Stephen Erickson, Chris Ravenscroft, Dominik Schuermann, Adam Shanks
+ *  
+ * This code is dual-licensed under the terms of the Apache License Version 2.0 and
+ * the terms of the General Public License (GPL) Version 2.
+ * You may use this code according to either of these licenses as is most appropriate
+ * for your project on a case-by-case basis.
+ * 
+ * The terms of each license can be found in the root directory of this project's repository as well as at:
+ * 
+ * * http://www.apache.org/licenses/LICENSE-2.0
+ * * http://www.gnu.org/licenses/gpl-2.0.txt
+ *  
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under these Licenses is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See each License for the specific language governing permissions and
+ * limitations under that License.
+ */
+
 package com.stericson.RootTools;
 
 import android.app.Activity;
@@ -5,10 +27,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
-import android.os.Bundle;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -16,11 +38,10 @@ import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.JavaCommandCapture;
 import com.stericson.RootTools.execution.Shell;
-import com.stericson.RootTools.lib.FileStat;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
-
 
 public class SanityCheckRootTools extends Activity
 {
@@ -162,45 +183,45 @@ public class SanityCheckRootTools extends Activity
 
             boolean result;
 
-            //visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing getPath");
-            //visualUpdate(TestHandler.ACTION_DISPLAY, "[ getPath ]\n");
-            //
-            //try
-            //{
-            //    List<String> paths = RootTools.getPath();
-            //
-            //    for (String path : paths)
-            //    {
-            //        visualUpdate(TestHandler.ACTION_DISPLAY, path + " k\n\n");
-            //    }
-            //
-            //}
-            //catch (Exception e)
-            //{
-            //    e.printStackTrace();
-            //}
-            //
-            //visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing A ton of commands");
-            //visualUpdate(TestHandler.ACTION_DISPLAY, "[ Ton of Commands ]\n");
-            //
-            //for (int i = 0; i < 100; i++)
-            //{
-            //    RootTools.exists("/system/xbin/busybox");
-            //}
+            visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing getPath");
+            visualUpdate(TestHandler.ACTION_DISPLAY, "[ getPath ]\n");
 
-            //visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing Find Binary");
-            //result = RootTools.isRootAvailable();
-            //visualUpdate(TestHandler.ACTION_DISPLAY, "[ Checking Root ]\n");
-            //visualUpdate(TestHandler.ACTION_DISPLAY, result + " k\n\n");
+            try
+            {
+                List<String> paths = RootTools.getPath();
 
-            //visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing file exists");
-            //visualUpdate(TestHandler.ACTION_DISPLAY, "[ Checking Exists() ]\n");
-            //visualUpdate(TestHandler.ACTION_DISPLAY, RootTools.exists("/system/sbin/[") + " k\n\n");
+                for (String path : paths)
+                {
+                    visualUpdate(TestHandler.ACTION_DISPLAY, path + " k\n\n");
+                }
 
-            //visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing Is Access Given");
-            //result = RootTools.isAccessGiven();
-            //visualUpdate(TestHandler.ACTION_DISPLAY, "[ Checking for Access to Root ]\n");
-            //visualUpdate(TestHandler.ACTION_DISPLAY, result + " k\n\n");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+            visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing A ton of commands");
+            visualUpdate(TestHandler.ACTION_DISPLAY, "[ Ton of Commands ]\n");
+
+            for (int i = 0; i < 100; i++)
+            {
+                RootTools.exists("/system/xbin/busybox");
+            }
+
+            visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing Find Binary");
+            result = RootTools.isRootAvailable();
+            visualUpdate(TestHandler.ACTION_DISPLAY, "[ Checking Root ]\n");
+            visualUpdate(TestHandler.ACTION_DISPLAY, result + " k\n\n");
+
+            visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing file exists");
+            visualUpdate(TestHandler.ACTION_DISPLAY, "[ Checking Exists() ]\n");
+            visualUpdate(TestHandler.ACTION_DISPLAY, RootTools.exists("/system/sbin/[") + " k\n\n");
+
+            visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing Is Access Given");
+            result = RootTools.isAccessGiven();
+            visualUpdate(TestHandler.ACTION_DISPLAY, "[ Checking for Access to Root ]\n");
+            visualUpdate(TestHandler.ACTION_DISPLAY, result + " k\n\n");
 
             visualUpdate(TestHandler.ACTION_PDISPLAY, "Testing Remount");
             result = RootTools.remount("/system", "rw");

@@ -4,11 +4,7 @@ import android.os.StatFs;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.stericson.RootTools.lib.FileStat;
-import com.stericson.RootTools.lib.Permission;
-import com.stericson.RootTools.lib.FileType;
 import com.stericson.RootTools.containers.SymbolicLink;
-import com.stericson.RootTools.internal.RootToolsInternal;
 
 import junit.framework.TestCase;
 
@@ -24,9 +20,9 @@ public class RootToolsTest extends TestCase
 
     public void testGetBinPaths() throws Exception
     {
-        String[] binPaths = RootToolsInternal.getBinPaths();
+        List<String> binPaths = RootTools.getBinPaths();
         assertNotNull(binPaths);
-        assertTrue(binPaths.length > 0);
+        assertTrue(binPaths.size() > 0);
     }
 
     public void testStatFs() throws Exception
@@ -152,56 +148,6 @@ public class RootToolsTest extends TestCase
 
     }
 
-    public void testGetFileInfo_String() throws Exception
-    {
-        String path = "/data/data/com.king.candycrushsaga/app_storage/settings.dat";
-        FileStat fileStat = RootTools.getFileStat(path);
-
-        //assertEquals("/data/data/com.king.candycrushsaga/app_storage/settings.dat", fileStat.getFile().getPath());
-        //assertEquals("settings.dat", fileStat.getName());
-        assertEquals(20, fileStat.size);
-        assertEquals(8, fileStat.blockCount);
-        assertEquals(FileType.File, fileStat.type);
-        assertEquals(Permission.ReadWrite, fileStat.mode.permissions.user);
-        assertEquals(Permission.None, fileStat.mode.permissions.group);
-        assertEquals(Permission.None, fileStat.mode.permissions.others);
-        //assertEquals(SpecialPermission.None, fileStat.mode.permissions.getSpecialAccess());
-        assertEquals(10085, fileStat.userId);
-        assertEquals(10085, fileStat.groupId);
-        assertEquals(66306, fileStat.deviceId);
-        assertEquals(11375, fileStat.inode);
-        assertEquals(1, fileStat.hardLinkCount);
-        //assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2014-08-01 00:48:54"), fileStat.getLastAccessed());
-        //assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2014-08-01 00:48:55"), fileStat.getLastModified());
-        //assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2014-08-01 00:48:56"), fileStat.getLastChanged());
-        assertEquals(4096, fileStat.blockSize);
-    }
-
-    public void testGetFileInfo_File() throws Exception
-    {
-        File file = new File("/data/data/com.king.candycrushsaga/app_storage/settings.dat");
-        FileStat fileStat = RootTools.getFileStat(file);
-
-        //assertEquals("/data/data/com.king.candycrushsaga/app_storage/settings.dat", fileStat.getFile().getPath());
-        //assertEquals("settings.dat", fileStat.getName());
-        assertEquals(20, fileStat.size);
-        assertEquals(8, fileStat.blockCount);
-        assertEquals(FileType.File, fileStat.type);
-        assertEquals(Permission.ReadWrite, fileStat.mode.permissions.user);
-        assertEquals(Permission.None, fileStat.mode.permissions.group);
-        assertEquals(Permission.None, fileStat.mode.permissions.others);
-        //assertEquals(SpecialPermission.None, fileStat.mode.permissions.getSpecialAccess());
-        assertEquals(10085, fileStat.userId);
-        assertEquals(10085, fileStat.groupId);
-        assertEquals(66306, fileStat.deviceId);
-        assertEquals(11375, fileStat.inode);
-        assertEquals(1, fileStat.hardLinkCount);
-        //assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2014-08-01 00:48:54"), fileStat.getLastAccessed());
-        //assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2014-08-01 00:48:55"), fileStat.getLastModified());
-        //assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2014-08-01 00:48:56"), fileStat.getLastChanged());
-        assertEquals(4096, fileStat.blockSize);
-    }
-
     public void testGetInode() throws Exception
     {
 
@@ -264,7 +210,7 @@ public class RootToolsTest extends TestCase
 
     public void testGetSymlinks_FileBoolean() throws Exception
     {
-        File directory = new File("/system");
+        final String directory = "/system";
 
         List<SymbolicLink> symLinksAll = RootTools.getSymLinks(directory, -1);
         List<SymbolicLink> symLinksDepth0= RootTools.getSymLinks(directory, 0);
@@ -285,7 +231,7 @@ public class RootToolsTest extends TestCase
 
     public void testGetSymlinks_File() throws Exception
     {
-        File directory = new File("/system");
+        final String directory = "/system";
         List<SymbolicLink> symLinks = RootTools.getSymLinks(directory);
 
         assertTrue(symLinks.size() > 0);

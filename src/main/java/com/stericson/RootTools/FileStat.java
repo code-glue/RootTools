@@ -1,4 +1,4 @@
-package com.stericson.RootTools.lib;
+package com.stericson.RootTools;
 
 
 import android.text.TextUtils;
@@ -159,7 +159,7 @@ public class FileStat
     {
         String sizeOrDeviceId = "";
         String name = this.file.getName();
-        String realPath = this.isSymLink() ? RootToolsLib.getRealPath(this.file.getPath()) : null;
+        String realPath = this.isSymLink() ? RootTools.getRealPath(this.file.getPath()) : null;
 
         switch (this.type)
         {
@@ -178,8 +178,8 @@ public class FileStat
         return String.format("%s %-8s %-8s %8s %s %s",
                              this.mode.getSymbols(),
                              //this.hardLinkCount,
-                             RootToolsLib.getUserName(this.userId),
-                             RootToolsLib.getUserName(this.groupId),
+                             RootTools.getUserName(this.userId),
+                             RootTools.getUserName(this.groupId),
                              sizeOrDeviceId,
                              new SimpleDateFormat("yyyy-MM-dd HH:mm").format(this.lastModified),
                              name);

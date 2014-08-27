@@ -1,6 +1,8 @@
-package com.stericson.RootTools.lib;
+package com.stericson.RootTools;
 
 import android.test.suitebuilder.annotation.SmallTest;
+
+import com.stericson.RootTools.Permission;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;

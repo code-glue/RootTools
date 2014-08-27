@@ -1,4 +1,4 @@
-package com.stericson.RootTools.lib;
+package com.stericson.RootTools;
 
 import junit.framework.TestCase;
 

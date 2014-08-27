@@ -1,7 +1,6 @@
-package com.stericson.RootTools.lib;
+package com.stericson.RootTools;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 public class FileMode implements Comparable<FileMode>
 {
