@@ -50,9 +50,11 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -192,7 +194,7 @@ public final class RootTools
     @NonNull
     public static String getUserNameAssert(final int userId) throws ErrnoException
     {
-        return RootTools.getUserInfo(userId).name;
+        return RootTools.getUserInfoAssert(userId).name;
     }
 
     @Nullable
@@ -243,13 +245,90 @@ public final class RootTools
         return RootTools.combinePaths(new File(parent), child).getPath();
     }
 
-    public static boolean setCurrentTime(int seconds)
+    public static boolean setCurrentTime(long milliseconds)
     {
+        final String alarmPath = "/dev/alarm";
+        final String rtcPath = "/dev/rtc0";
+
+        FileStat alarmStat = RootTools.getFileStat(alarmPath);
+        FileStat rtcStat = RootTools.getFileStat(rtcPath);
+
+        boolean setAlarmPermissions = alarmStat != null && !alarmStat.permissions.others.hasAccess(Permission.ReadWrite);
+        boolean setRtcPermissions = rtcStat != null && !rtcStat.permissions.others.hasAccess(Permission.ReadWrite);
+
         try
         {
-            return RootToolsNative.settimeofday(seconds, false);
+            if (setAlarmPermissions)
+            {
+                try
+                {
+                    RootTools.setOthersPermissions(alarmPath, Permission.ReadWrite);
+                }
+                catch (Exception ignore) {}
+            }
+
+            if (setRtcPermissions)
+            {
+                try
+                {
+                    RootTools.setOthersPermissions(rtcPath, Permission.ReadWrite);
+                }
+                catch (Exception ignore) {}
+            }
+
+            boolean result = SystemClock.setCurrentTimeMillis(milliseconds);
+            if (!result)
+            {
+                try
+                {
+                    int seconds = (int)((milliseconds + 500) / 1000);
+                    result = RootToolsNative.settimeofday(seconds, false);
+
+                    if (!result)
+                    {
+                        // I've got /dev/alarm set up with 666 and am calling setCurrentTimeMillis, but it always returns false
+                        // Iit can happen on the latest Samsung firmwares with KNOX (SELinux) enabled. The only way to overcome it is to use the date command line call
+                        // http://stackoverflow.com/questions/8739074/setting-system-time-of-rooted-phone/8752130#8752130
+                        String dateFormat = new SimpleDateFormat("yyyyMMdd.HHmmss").format(new Date(milliseconds));
+                        String command = String.format("date -s %s", dateFormat);
+                        result = SimpleCommand.run(command).size() > 0;
+                    }
+                }
+                catch (Exception ignore) {}
+            }
+
+            return result;
         }
-        catch (ErrnoException ignore) { return false; }
+        finally
+        {
+            if (setAlarmPermissions)
+            {
+                try
+                {
+                    RootTools.setOthersPermissions(alarmPath, alarmStat.permissions.others);
+                }
+                catch (Exception ignore) {}
+            }
+
+            if (setRtcPermissions)
+            {
+                try
+                {
+                    RootTools.setOthersPermissions(rtcPath, rtcStat.permissions.others);
+                }
+                catch (Exception ignore) {}
+            }
+        }
+    }
+
+    //public static boolean setCurrentTime(Date date)
+    //{
+    //
+    //}
+
+    public static boolean setCurrentTime(int seconds)
+    {
+        return RootTools.setCurrentTime((long)seconds * 1000);
     }
 
     public static boolean setCurrentTimeAssert(int seconds) throws ErrnoException

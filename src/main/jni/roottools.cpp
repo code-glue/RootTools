@@ -30,6 +30,19 @@
 #include <pwd.h>
 #include <unistd.h>
 
+#include <linux/android_alarm.h>
+#include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <inttypes.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+#include <linux/android_alarm.h>
+#include <linux/rtc.h>
+#include <sys/ioctl.h>
 
 #define TO_JAVA_STRING(NAME, EXP) \
         jstring NAME = env->NewStringUTF(EXP); \
@@ -93,6 +106,82 @@ static jobject makeStructPasswd(JNIEnv* env, const struct passwd& structPasswd)
            static_cast<jint>(structPasswd.pw_uid), static_cast<jint>(structPasswd.pw_gid), pw_dir, pw_shell);
 }
 
+static int settime_alarm(struct timespec *ts)
+{
+    int ret;
+    int fd = open("/dev/alarm", O_RDWR);
+    if (fd < 0)
+    {
+        ALOGE("Failed to open /dev/alarm");
+        return fd;
+    }
+    ret = ioctl(fd, ANDROID_ALARM_SET_RTC, ts);
+    close(fd);
+    return ret;
+}
+
+static int settime_alarm_tm(struct tm *tm)
+{
+    struct timespec ts;
+    time_t t = mktime(tm);
+    ts.tv_sec = t;
+    ts.tv_nsec = 0;
+    return settime_alarm(&ts);
+}
+
+static int settime_rtc_tm(struct tm *tm)
+{
+    int ret;
+    struct timeval tv;
+    struct rtc_time rtc;
+    int fd = open("/dev/rtc0", O_RDWR);
+
+    if (fd < 0)
+    {
+        ALOGE("Failed to open /dev/rtc0");
+        return fd;
+    }
+
+    tv.tv_sec = mktime(tm);
+    tv.tv_usec = 0;
+    ret = settimeofday(&tv, NULL);
+
+    if (ret < 0)
+    {
+        goto done;
+    }
+
+    memset(&rtc, 0, sizeof(rtc));
+    rtc.tm_sec = tm->tm_sec;
+    rtc.tm_min = tm->tm_min;
+    rtc.tm_hour = tm->tm_hour;
+    rtc.tm_mday = tm->tm_mday;
+    rtc.tm_mon = tm->tm_mon;
+    rtc.tm_year = tm->tm_year;
+    rtc.tm_wday = tm->tm_wday;
+    rtc.tm_yday = tm->tm_yday;
+    rtc.tm_isdst = tm->tm_isdst;
+    ret = ioctl(fd, RTC_SET_TIME, rtc);
+done:
+    close(fd);
+    return ret;
+}
+
+static int settime_rtc_timeval(struct timeval *tv)
+{
+    struct tm tm;
+    time_t t = tv->tv_sec;
+    return gmtime_r(&t, &tm) ? settime_rtc_tm(&tm) : -1;
+}
+
+static int settime_alarm_timeval(struct timeval *tv)
+{
+    struct timespec ts;
+    ts.tv_sec = tv->tv_sec;
+    ts.tv_nsec = tv->tv_usec * 1000;
+    return settime_alarm(&ts);
+}
+
 static jstring roottools_strerror(JNIEnv* env, jint errorCode)
 {
     char buffer[256];
@@ -125,7 +214,7 @@ static jobject roottools_stat(JNIEnv* env, jstring javaPath, jboolean followLink
     return makeStructStat(env, structStat);
 }
 
-jobject roottools_getpwuid(JNIEnv* env, jint userId, jboolean throwOnError)
+static jobject roottools_getpwuid(JNIEnv* env, jint userId, jboolean throwOnError)
 {
     errno = 0;
     struct passwd* pw = getpwuid(userId);
@@ -142,7 +231,7 @@ jobject roottools_getpwuid(JNIEnv* env, jint userId, jboolean throwOnError)
     return makeStructPasswd(env, *pw);
 }
 
-jstring roottools_realpath(JNIEnv* env, jstring javaPath, jboolean throwOnError)
+static jstring roottools_realpath(JNIEnv* env, jstring javaPath, jboolean throwOnError)
 {
     ScopedUtfChars path(env, javaPath);
     if (path.c_str() == NULL)
@@ -163,11 +252,22 @@ jstring roottools_realpath(JNIEnv* env, jstring javaPath, jboolean throwOnError)
     return env->NewStringUTF(buffer);
 }
 
-jboolean roottools_settimeofday(JNIEnv* env, jint seconds, jboolean throwOnError)
+static jboolean roottools_settimeofday(JNIEnv* env, jint seconds, jboolean throwOnError)
 {
-    struct timeval time = { seconds };
+    struct timeval tv;
+    tv.tv_sec = seconds;
+    tv.tv_usec = 0;
 
-    if (settimeofday(&time, NULL) == 0)
+    int result = settime_alarm_timeval(&tv);
+    ALOGE("settime_alarm_timeval result=%d: errno %d", result, errno);
+
+    if (result < 0)
+    {
+        int result = settime_rtc_timeval(&tv);
+        ALOGE("settime_rtc_timeval result=%d: errno %d", result, errno);
+    }
+
+    if (result == 0)
     {
         return true;
     }
