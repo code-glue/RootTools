@@ -167,6 +167,18 @@ public final class RootTools
         return RootTools.getFileStatAssert(path, true);
     }
 
+    @NonNull
+    public static FileStat getFileStatAssert(@NonNull final File file, final boolean followLinks) throws ErrnoException
+    {
+        return RootTools.getFileStatAssert(file.getPath(), followLinks);
+    }
+
+    @NonNull
+    public static FileStat getFileStatAssert(@NonNull final File file) throws ErrnoException
+    {
+        return RootTools.getFileStatAssert(file.getPath());
+    }
+
     @Nullable
     public static UserInfo getUserInfo(final int userId)
     {
