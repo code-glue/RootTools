@@ -29,16 +29,4 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    //task nativeLibsToJar(type: Zip, description: 'create a jar archive of the native libs') {
-    //    destinationDir file("$buildDir/native-libs")
-    //    baseName 'native-libs'
-    //    extension 'jar'
-    //    from fileTree(dir: 'libs', include: '**/*.so')
-    //    into 'lib/armeabi/'
-    //}
-    //
-    //tasks.withType(JavaCompile) {
-    //    compileTask -> compileTask.dependsOn(nativeLibsToJar)
-    //}
 }
