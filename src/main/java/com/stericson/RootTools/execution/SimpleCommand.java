@@ -25,7 +25,7 @@ package com.stericson.RootTools.execution;
 import android.support.annotation.NonNull;
 
 import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.exceptions.RootDeniedException;
+import com.stericson.RootTools.RootDeniedException;
 
 import java.io.IOException;
 import java.util.ArrayList;

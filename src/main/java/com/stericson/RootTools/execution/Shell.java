@@ -30,7 +30,7 @@ import java.util.concurrent.TimeoutException;
 import android.content.Context;
 
 import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.exceptions.RootDeniedException;
+import com.stericson.RootTools.RootDeniedException;
 
 public class Shell
 {

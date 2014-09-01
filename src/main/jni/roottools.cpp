@@ -15,7 +15,7 @@
  *
  */
 
-#define LOG_TAG "RootToolsLib"
+#define LOG_TAG "RootToolsNative"
 
 #include "nativehelper/JniConstants.h"
 #include "nativehelper/ScopedLocalRef.h"
@@ -203,7 +203,7 @@ static jobject roottools_stat(JNIEnv* env, jstring javaPath, jboolean followLink
 
     if (result != 0)
     {
-        ALOGE("%s failed: errno %d '%s'", followLinks ? "stat" : "lstat", errno, path.c_str());
+        ALOGE("%s failed: errno=%d path='%s' throwOnError=%d", followLinks ? "stat" : "lstat", errno, path.c_str(), throwOnError);
         if (throwOnError)
         {
             throwErrnoException(env, followLinks ? "stat" : "lstat");

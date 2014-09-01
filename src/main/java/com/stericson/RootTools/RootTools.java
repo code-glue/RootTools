@@ -35,7 +35,6 @@ import android.util.Log;
 
 import com.stericson.RootTools.containers.Mount;
 import com.stericson.RootTools.containers.SymbolicLink;
-import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.Command;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.Shell;
@@ -1085,7 +1084,7 @@ public final class RootTools
      * @param shellPath a <code>String</code> to Indicate the path to the shell that you want to open.
      * @param timeout   an <code>int</code> to Indicate the length of time before giving up on opening a shell.
      * @throws TimeoutException
-     * @throws com.stericson.RootTools.exceptions.RootDeniedException
+     * @throws RootDeniedException
      * @throws IOException
      */
     @NonNull
@@ -1100,7 +1099,7 @@ public final class RootTools
      *
      * @param shellPath a <code>String</code> to Indicate the path to the shell that you want to open.
      * @throws TimeoutException
-     * @throws com.stericson.RootTools.exceptions.RootDeniedException
+     * @throws RootDeniedException
      * @throws IOException
      */
     @NonNull
@@ -1243,7 +1242,7 @@ public final class RootTools
      * @param shellContext the context to execute the shell with
      * @param retry        a <code>int</code> to indicate how many times the ROOT shell should try to open with root priviliges...
      * @throws TimeoutException
-     * @throws com.stericson.RootTools.exceptions.RootDeniedException
+     * @throws RootDeniedException
      * @throws IOException
      */
     @NonNull
@@ -1263,7 +1262,7 @@ public final class RootTools
      * @param timeout      an <code>int</code> to Indicate the length of time to wait before giving up on opening a shell.
      * @param shellContext the context to execute the shell with
      * @throws TimeoutException
-     * @throws com.stericson.RootTools.exceptions.RootDeniedException
+     * @throws RootDeniedException
      * @throws IOException
      */
     @NonNull
@@ -1279,7 +1278,7 @@ public final class RootTools
      * @param root         a <code>boolean</code> to Indicate whether or not you want to open a root shell or a standard shell
      * @param shellContext the context to execute the shell with
      * @throws TimeoutException
-     * @throws com.stericson.RootTools.exceptions.RootDeniedException
+     * @throws RootDeniedException
      * @throws IOException
      */
     @NonNull
@@ -1295,7 +1294,7 @@ public final class RootTools
      * @param root    a <code>boolean</code> to Indicate whether or not you want to open a root shell or a standard shell
      * @param timeout an <code>int</code> to Indicate the length of time to wait before giving up on opening a shell.
      * @throws TimeoutException
-     * @throws com.stericson.RootTools.exceptions.RootDeniedException
+     * @throws RootDeniedException
      * @throws IOException
      */
     @NonNull
@@ -1310,7 +1309,7 @@ public final class RootTools
      *
      * @param root a <code>boolean</code> to Indicate whether or not you want to open a root shell or a standard shell
      * @throws TimeoutException
-     * @throws com.stericson.RootTools.exceptions.RootDeniedException
+     * @throws RootDeniedException
      * @throws IOException
      */
     @NonNull
@@ -1903,12 +1902,28 @@ public final class RootTools
         return processRunning[0];
     }
 
+    public static File[] getAllPaths(@NonNull final String path)
+    {
+        List<File> paths = new ArrayList<File>();
+
+        File file = new File(path);
+        paths.add(file);
+
+        while (null != (file = file.getParentFile()))
+        {
+            paths.add(file);
+        }
+
+        Collections.reverse(paths);
+        return paths.toArray(new File[paths.size()]);
+    }
+
     /**
      * @return <code>true</code> if su was found.
      */
     public static boolean isRootAvailable()
     {
-        return !findBinaryPaths("su").isEmpty();
+        return !RootTools.findBinaryPaths("su").isEmpty();
     }
 
     /**

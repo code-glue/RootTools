@@ -34,7 +34,6 @@ import android.os.StrictMode;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.stericson.RootTools.exceptions.RootDeniedException;
 import com.stericson.RootTools.execution.CommandCapture;
 import com.stericson.RootTools.execution.JavaCommandCapture;
 import com.stericson.RootTools.execution.Shell;
