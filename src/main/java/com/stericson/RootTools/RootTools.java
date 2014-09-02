@@ -2271,7 +2271,6 @@ public final class RootTools
         if (!newPermissions.equals(fileStat.permissions))
         {
             String commandLine = "chmod " + newPermissions.toOctalString() + " " + path;
-            Log.d("RootTools.setPermissions()", commandLine);
             CommandCapture command = new CommandCapture(0, false, commandLine);
             Shell.startRootShell().add(command);
             commandWait(Shell.startRootShell(), command);
