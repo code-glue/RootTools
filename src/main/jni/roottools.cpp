@@ -112,7 +112,7 @@ static int settime_alarm(struct timespec *ts)
     int fd = open("/dev/alarm", O_RDWR);
     if (fd < 0)
     {
-        ALOGE("Failed to open /dev/alarm");
+        ALOGD("Failed to open /dev/alarm");
         return fd;
     }
     ret = ioctl(fd, ANDROID_ALARM_SET_RTC, ts);
@@ -138,7 +138,7 @@ static int settime_rtc_tm(struct tm *tm)
 
     if (fd < 0)
     {
-        ALOGE("Failed to open /dev/rtc0");
+        ALOGD("Failed to open /dev/rtc0");
         return fd;
     }
 
@@ -203,7 +203,7 @@ static jobject roottools_stat(JNIEnv* env, jstring javaPath, jboolean followLink
 
     if (result != 0)
     {
-        ALOGE("%s failed: errno=%d path='%s' throwOnError=%d", followLinks ? "stat" : "lstat", errno, path.c_str(), throwOnError);
+        ALOGD("%s failed: errno=%d path='%s' throwOnError=%d", followLinks ? "stat" : "lstat", errno, path.c_str(), throwOnError);
         if (throwOnError)
         {
             throwErrnoException(env, followLinks ? "stat" : "lstat");
@@ -220,7 +220,7 @@ static jobject roottools_getpwuid(JNIEnv* env, jint userId, jboolean throwOnErro
     struct passwd* pw = getpwuid(userId);
     if (pw == NULL)
     {
-        ALOGE("getpwuid failed: errno %d '%d'", errno, userId);
+        ALOGD("getpwuid failed: errno %d '%d'", errno, userId);
         if (throwOnError)
         {
             throwErrnoException(env, "getpwuid");
@@ -242,7 +242,7 @@ static jstring roottools_realpath(JNIEnv* env, jstring javaPath, jboolean throwO
     char buffer[PATH_MAX];
     if (realpath(path.c_str(), buffer) == NULL)
     {
-        ALOGE("realpath failed: errno %d '%s'", errno, path.c_str());
+        ALOGD("realpath failed: errno %d '%s'", errno, path.c_str());
         if (throwOnError)
         {
             throwErrnoException(env, "realpath");
@@ -259,12 +259,12 @@ static jboolean roottools_settimeofday(JNIEnv* env, jint seconds, jboolean throw
     tv.tv_usec = 0;
 
     int result = settime_alarm_timeval(&tv);
-    ALOGE("settime_alarm_timeval result=%d: errno %d", result, errno);
+    ALOGD("settime_alarm_timeval result=%d: errno %d", result, errno);
 
     if (result < 0)
     {
         int result = settime_rtc_timeval(&tv);
-        ALOGE("settime_rtc_timeval result=%d: errno %d", result, errno);
+        ALOGD("settime_rtc_timeval result=%d: errno %d", result, errno);
     }
 
     if (result == 0)
@@ -272,7 +272,7 @@ static jboolean roottools_settimeofday(JNIEnv* env, jint seconds, jboolean throw
         return true;
     }
 
-    ALOGE("settimeofday failed: errno %d seconds=%d", errno, seconds);
+    ALOGD("settimeofday failed: errno %d seconds=%d", errno, seconds);
     if (throwOnError)
     {
         throwErrnoException(env, "settimeofday");

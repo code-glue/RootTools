@@ -31,7 +31,7 @@ jclass JniConstants::structPasswdClass;
 static jclass findClass(JNIEnv* env, const char* name) {
     jclass result = NULL;
 
-    ALOGV("JniConstants::findClass %s", name);
+    ALOGD("JniConstants::findClass %s", name);
     ScopedLocalRef<jclass> localClass(env, env->FindClass(name));
     if (localClass.get() != NULL)
     {
