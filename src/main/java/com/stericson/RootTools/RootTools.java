@@ -208,6 +208,11 @@ public final class RootTools
         return RootTools.getUserInfoAssert(userId).name;
     }
 
+    public static int getUserId()
+    {
+        return RootToolsNative.geteuid();
+    }
+
     @Nullable
     public static String getRealPath(@NonNull final String path)
     {
