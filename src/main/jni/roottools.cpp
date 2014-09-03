@@ -231,6 +231,11 @@ static jobject roottools_getpwuid(JNIEnv* env, jint userId, jboolean throwOnErro
     return makeStructPasswd(env, *pw);
 }
 
+static jint roottools_geteuid()
+{
+    return geteuid();
+}
+
 static jstring roottools_realpath(JNIEnv* env, jstring javaPath, jboolean throwOnError)
 {
     ScopedUtfChars path(env, javaPath);
@@ -296,6 +301,12 @@ extern "C" JNIEXPORT jobject JNICALL
 Java_com_stericson_RootTools_RootToolsNative_getpwuid(JNIEnv* env, jclass clazz, jint userId, jboolean throwOnError)
 {
     return roottools_getpwuid(env, userId, throwOnError);
+}
+
+extern "C" JNIEXPORT jint JNICALL
+Java_com_stericson_RootTools_RootToolsNative_geteuid(JNIEnv* env, jclass clazz)
+{
+    return roottools_geteuid();
 }
 
 extern "C" JNIEXPORT jstring JNICALL
