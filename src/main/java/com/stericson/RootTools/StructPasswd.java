@@ -22,7 +22,6 @@ package com.stericson.RootTools;
  *
  * Functionally equivalent to https://android.googlesource.com/platform/libcore/+/master/luni/src/main/java/android/system/StructPasswd.java
  *
- * @hide
  */
 final class StructPasswd {
   public final String pw_name;

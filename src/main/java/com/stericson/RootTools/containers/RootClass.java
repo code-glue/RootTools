@@ -102,7 +102,7 @@ public class RootClass /* #ANNOTATIONS extends AbstractProcessor */ {
                             " " + rc1 + " " + rc2 + " " + rc3 + " " + rc4 + " " + rc5
                     );
                     for(File file:classFiles) {
-                        sb.append(" " + file.getPath());
+                        sb.append(" ").append(file.getPath());
                     }
                     cmd = new String[] {
                             "cmd", "/C",
@@ -239,7 +239,7 @@ public class RootClass /* #ANNOTATIONS extends AbstractProcessor */ {
             int recentSdkVersion = 0;
             for(File file:files) {
                 
-            	String fileName = null;
+            	String fileName;
             	if (file.getName().contains("-")) {
             		String[] splitFileName = file.getName().split("-");
             		if (splitFileName[1].contains("W")) {

@@ -86,9 +86,7 @@ public class SanityCheckRootTools extends Activity
                 this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
             version = packageInfo.versionName;
         }
-        catch (PackageManager.NameNotFoundException e)
-        {
-        }
+        catch (PackageManager.NameNotFoundException ignore) {}
 
         print("SanityCheckRootTools v " + version + "\n\n");
 

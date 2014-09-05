@@ -30,7 +30,6 @@ class RootToolsNative
     static native String realpath(@NonNull String path, boolean throwOnError) throws ErrnoException;
 
     /** http://man7.org/linux/man-pages/man2/settimeofday.2.html */
-    @Nullable
     static native boolean settimeofday(int seconds, boolean throwOnError) throws ErrnoException;
 
     static

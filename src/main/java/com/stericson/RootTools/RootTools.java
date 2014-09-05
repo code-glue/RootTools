@@ -247,9 +247,9 @@ public final class RootTools
     {
         File combined = parent;
 
-        for (int i = 0; i < child.length; ++i)
+        for (String name : child)
         {
-            combined = new File(parent, child[i]);
+            combined = new File(parent, name);
         }
 
         return combined;
@@ -922,7 +922,6 @@ public final class RootTools
      * @return boolean to indicate whether the operation completed. Note that this is not indicative
      * of whether the problem was fixed, just that the method did not encounter any
      * exceptions.
-     * @throws Exception if the operation cannot be completed.
      */
     public static boolean fixUtils(@NonNull final String[] utils)
     {
@@ -1169,11 +1168,6 @@ public final class RootTools
                 ));
             }
 
-            if (mounts == null)
-            {
-                throw new Exception();
-            }
-
             return mounts;
 
         }
@@ -1181,13 +1175,19 @@ public final class RootTools
         {
             try
             {
-                fr.close();
+                if (fr != null)
+                {
+                    fr.close();
+                }
             }
             catch (Exception ignored) {}
 
             try
             {
-                lnr.close();
+                if (lnr != null)
+                {
+                    lnr.close();
+                }
             }
             catch (Exception ignored) {}
         }
@@ -1365,7 +1365,6 @@ public final class RootTools
      * @param path The partition to find the space for.
      * @return the amount if space found within the desired partition. If the space was not found
      * then the value is -1
-     * @throws TimeoutException
      */
     public static long getSpace(@NonNull final String path)
     {
@@ -1525,7 +1524,6 @@ public final class RootTools
      *
      * @param directory path to search for Symlinks.
      * @return <code>List<Symlink></code> an ArrayList of the class Symlink.
-     * @throws Exception if we cannot return the Symlinks.
      */
     @NonNull
     public static List<SymbolicLink> getSymLinks(@NonNull final String directory, final int maxDepth) throws TimeoutException, RootDeniedException, IOException
@@ -1619,7 +1617,7 @@ public final class RootTools
     /**
      * Checks whether the toolbox or busybox binary contains a specific util
      *
-     * @param util
+     * @param util Name of the utility to find.
      * @param box  Should contain "toolbox" or "busybox"
      * @return true if it contains this util
      */
@@ -1790,7 +1788,6 @@ public final class RootTools
 
     /**
      * @return <code>true</code> if your app has been given root access.
-     * @throws TimeoutException if this operation times out. (cannot determine if access is given)
      */
     public static boolean isAccessGiven()
     {
@@ -1872,7 +1869,6 @@ public final class RootTools
      *
      * @param processName name of process to check
      * @return <code>true</code> if process was found
-     * @throws TimeoutException (Could not determine if the process is running)
      */
     public static boolean isProcessRunning(@NonNull final String processName)
     {
@@ -1945,7 +1941,7 @@ public final class RootTools
         final String[] pid_list = {""};
 
         //Assume that the process is running
-        final boolean[] processRunning = {true};
+        //final boolean[] processRunning = {true};
 
         try
         {
@@ -2109,7 +2105,6 @@ public final class RootTools
      * devices. This is done by killing the main init process named zygote. Zygote is restarted
      * automatically by Android after killing it.
      *
-     * @throws TimeoutException
      */
     public static void restartAndroid()
     {
@@ -2139,7 +2134,6 @@ public final class RootTools
      *
      * @param shell   The shell to execute the command on, this can be a root shell or a standard shell.
      * @param command The command to execute in the shell
-     * @throws IOException
      */
     public static void runShellCommand(@NonNull final Shell shell, @NonNull final Command command)
     {
@@ -2238,7 +2232,7 @@ public final class RootTools
      * @param type The type of log, 1 for verbose, 2 for error, 3 for debug
      * @param e    The exception that was thrown (Needed for errors)
      */
-    public static void log(@NonNull String TAG, @NonNull final String msg, final int type, @NonNull final Exception e)
+    public static void log(@Nullable String TAG, @Nullable final String msg, final int type, @NonNull final Exception e)
     {
         if (msg != null && !msg.equals(""))
         {
