@@ -60,10 +60,16 @@ public class Remounter {
         if (file.endsWith("/") && !file.equals("/")) {
             file = file.substring(0, file.lastIndexOf("/"));
         }
+
         //Make sure that what we are trying to remount is in the mount list.
         boolean foundMount = false;
 
         while (!foundMount) {
+            //Check for symlinks
+            String symlink = RootTools.getSymlink(file);
+            if (symlink != null && symlink.length() > 0) {
+              file = symlink;
+            }
             try {
                 for (Mount mount : RootTools.getMounts()) {
                     RootTools.log(mount.getMountPoint().toString());
