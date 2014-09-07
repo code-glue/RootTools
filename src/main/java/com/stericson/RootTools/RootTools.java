@@ -602,6 +602,7 @@ public final class RootTools
     public static String findBinaryPath(@NonNull final String binaryName)
     {
         List<String> binaryPaths = RootTools.findBinaryPaths(binaryName);
+        String[] modes = new String[] {"0755", "0775", "0777", "1755", "1775", "1777"};
 
         if (binaryPaths.isEmpty())
         {
@@ -617,12 +618,10 @@ public final class RootTools
 
             if (fileStat != null)
             {
-                switch (fileStat.mode.permissions.getValue())
-                {
-                    case 755:
-                    case 775:
-                    case 777:
+                for (String mode : modes) {
+                    if (fileStat.mode.permissions.toOctalString().equals(mode)) {
                         return fullPath;
+                    }
                 }
             }
         }
